@@ -18,6 +18,10 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
+//TODO: 1. Как пользователю активировать лицензию на новом устройстве, если вы кидаете исключение?
+//TODO: 2. Ошибки в подсчетах дат
+//TODO: 3. Возвращать информацию нужно о текущей лицензии (один тикет), а не список тикетов
+
 @RequiredArgsConstructor
 @Service
 public class LicenseServiceImpl implements LicenseService {

@@ -10,6 +10,7 @@ import ru.mtuci.praktikaRBPO.services.LicenseHistoryService;
 
 import java.util.Date;
 
+//TODO: 1. Для каждой сущности должны быть реализованы всу CRUD операции
 
 @Service
 public class LicenseHistoryServiceImpl implements LicenseHistoryService {

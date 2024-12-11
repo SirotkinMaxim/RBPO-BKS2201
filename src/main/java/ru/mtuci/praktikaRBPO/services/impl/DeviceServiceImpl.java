@@ -14,6 +14,8 @@ import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.Optional;
 
+//TODO: 1. Чей mac-адрес вы получаете?
+
 @RequiredArgsConstructor
 @Service
 public class DeviceServiceImpl implements DeviceService {
