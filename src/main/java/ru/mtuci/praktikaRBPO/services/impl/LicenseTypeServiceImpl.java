@@ -27,9 +27,7 @@ public class LicenseTypeServiceImpl implements LicenseTypeService {
 
     @Override
     public LicenseType addLicenseType(String name,Integer defaultDuration,String description) {
-        if (licenseTypeRepository.existsByName(name)) {
-            throw new IllegalArgumentException("Тип лицензии с таким именем уже существует");
-        }
+
         LicenseType licenseType = new LicenseType();
         licenseType.setName(name);
         licenseType.setDefaultDuration(defaultDuration);
@@ -41,6 +39,13 @@ public class LicenseTypeServiceImpl implements LicenseTypeService {
     @Override
     public List<LicenseType> findAll(){
         return licenseTypeRepository.findAll();
+    }
+
+    public LicenseType renameLicenseType(Long id, String newName) {
+        LicenseType licenseType = licenseTypeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("LicenseType не найден."));
+        licenseType.setName(newName);
+        return licenseTypeRepository.save(licenseType);
     }
 
 }

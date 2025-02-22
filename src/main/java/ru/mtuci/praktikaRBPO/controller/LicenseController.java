@@ -52,7 +52,7 @@ public class LicenseController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+
     @PostMapping("/renew")
     public ResponseEntity<?> renewLicense(@RequestBody UpdateLicenseRequest updateLicenseRequest) {
         try {
@@ -66,8 +66,18 @@ public class LicenseController {
         }
     }
 
-
-
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{licenseId}")
+    public ResponseEntity<String> deleteLicense(@PathVariable Long licenseId) {
+        try {
+            licenseService.deleteLicense(licenseId);
+            return ResponseEntity.ok("Лицензия удалена.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ошибка: " + e.getMessage());
+        }
+    }
 }
 
 

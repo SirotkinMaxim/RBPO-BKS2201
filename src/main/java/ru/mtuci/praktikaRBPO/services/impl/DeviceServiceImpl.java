@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.mtuci.praktikaRBPO.model.Device;
 import ru.mtuci.praktikaRBPO.model.ApplicationUser;
+import ru.mtuci.praktikaRBPO.model.License;
 import ru.mtuci.praktikaRBPO.repository.DeviceLicenseRepository;
 import ru.mtuci.praktikaRBPO.repository.DeviceRepository;
 import ru.mtuci.praktikaRBPO.services.DeviceService;
@@ -13,6 +14,9 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.Optional;
+import java.util.Random;
+
+//TODO: 1. Чей mac-адрес вы получаете?
 
 @RequiredArgsConstructor
 @Service
@@ -21,11 +25,17 @@ public class DeviceServiceImpl implements DeviceService {
     private final DeviceRepository deviceRepository;
     private final DeviceLicenseRepository deviceLicenseRepository;
 
-    public void addDevice(String name, ApplicationUser applicationUser) throws SocketException {
+    public Device addDevice(String name, ApplicationUser applicationUser, License license) throws SocketException {
         String mac = getMacAddress();
         Optional<Device> existingDevice = deviceRepository.findByMac(mac);
+
         if (existingDevice.isPresent()) {
-            throw new IllegalArgumentException("Устройство с таким MAC-адресом уже существует");
+            Device device = existingDevice.get();
+            boolean hasActiveLicense = deviceLicenseRepository.existsByDeviceAndLicense(device, license);
+            if (hasActiveLicense) {
+                throw new IllegalStateException("Устройство с таким MAC-адресом уже связано с данной лицензией.");
+            }
+            return device;
         }
 
         Device device = new Device();
@@ -33,7 +43,21 @@ public class DeviceServiceImpl implements DeviceService {
         device.setMac(mac);
         device.setApplicationUser(applicationUser);
         deviceRepository.save(device);
+        return device;
     }
+
+    public Device renameDeviceByMac(String mac, String newName) {
+        Optional<Device> existingDevice = deviceRepository.findByMac(mac);
+        if (existingDevice.isEmpty()) {
+            throw new IllegalArgumentException("Устройство не найдено");
+        }
+
+        Device device = existingDevice.get();
+        device.setName(newName);
+        deviceRepository.save(device);
+        return device;
+    }
+
 
     public Device getDeviceById(Long id) {
         return deviceRepository.findById(id)
@@ -51,24 +75,21 @@ public class DeviceServiceImpl implements DeviceService {
         deviceRepository.delete(device);
     }
 
-    public static String getMacAddress() throws SocketException {
-        Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+    public static String getMacAddress() {
+        Random random = new Random();
+        byte[] mac = new byte[6];
 
-        while (networkInterfaces.hasMoreElements()) {
-            NetworkInterface networkInterface = networkInterfaces.nextElement();
-            if (networkInterface == null || networkInterface.isLoopback() || networkInterface.getHardwareAddress() == null) {
-                continue;
-            }
+        random.nextBytes(mac);
 
-            byte[] mac = networkInterface.getHardwareAddress();
-            StringBuilder sb = new StringBuilder();
+        mac[0] = (byte) (mac[0] & (byte) 0xFE);
+        mac[0] = (byte) (mac[0] | (byte) 0x02);
 
-            for (int i = 0; i < mac.length; i++) {
-                sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
-            }
-            return sb.toString();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < mac.length; i++) {
+            sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
         }
-        throw new SocketException("Ошибка");
+
+        return sb.toString();
     }
 
     public Device getByMac(String mac) {

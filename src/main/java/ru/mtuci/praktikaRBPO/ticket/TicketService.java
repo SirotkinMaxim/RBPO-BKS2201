@@ -39,9 +39,9 @@ public class TicketService {
     public Ticket createTicket(License license, Device device){
         Ticket ticket = new Ticket();
         ticket.setServerDate(new Date());
-        ticket.setTicketLifetime(license.getLicenseType().getDefaultDuration().longValue() * 30 * 24 * 60 * 60);
-        ticket.setActivationDate(license.getActivationDate());
-        ticket.setExpirationDate(license.getExpirationDate());;
+        ticket.setTicketLifetime(259200L);
+        ticket.setActivationDate(license.getActivationDate().toString());
+        ticket.setExpirationDate(license.getExpirationDate().toString());
         ticket.setUserId(device.getApplicationUser() != null ? device.getApplicationUser().getId() : null); ;
         ticket.setDeviceId(device.getMac());;
         ticket.setLicenseBlocked(license.getBlocked() != null ? license.getBlocked().toString() : "null");;

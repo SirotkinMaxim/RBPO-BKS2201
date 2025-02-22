@@ -18,8 +18,8 @@ public class Ticket {
 
     private Date serverDate;
     private Long ticketLifetime;
-    private Date activationDate;
-    private Date expirationDate;
+    private String activationDate;
+    private String expirationDate;
     private Long userId;
     private String deviceId;
     private String licenseBlocked;

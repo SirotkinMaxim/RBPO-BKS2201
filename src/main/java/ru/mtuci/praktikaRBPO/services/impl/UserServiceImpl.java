@@ -43,6 +43,17 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email);
     }
 
+    public void renameUserByEmail(String email, String newName, ApplicationUser authenticatedUser) {
+        if (!authenticatedUser.getEmail().equals(email)) {
+            throw new IllegalArgumentException("Вы можете переименовать только свой аккаунт");
+        }
+        ApplicationUser applicationUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Пользователь с таким email не найден"));
+
+        applicationUser.setName(newName);
+        userRepository.save(applicationUser);
+    }
+
     public ApplicationUser getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {

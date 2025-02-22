@@ -10,4 +10,5 @@ public interface LicenseTypeService {
     List<LicenseType> findAll();
     LicenseType getLicenseTypeById(Long id);
     LicenseType addLicenseType(String name,Integer defaultDuration,String description);
+    LicenseType renameLicenseType(Long id, String newName);
 }

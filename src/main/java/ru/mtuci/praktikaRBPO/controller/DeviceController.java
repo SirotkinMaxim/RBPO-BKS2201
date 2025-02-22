@@ -18,20 +18,6 @@ import java.net.SocketException;
 public class DeviceController {
 
     private final DeviceService deviceService;
-    private final UserService userService;
-
-    @PostMapping("/add")
-    public ResponseEntity<String> addDevice(@RequestBody DeviceAddRequest deviceAddRequest) {
-        try {
-            ApplicationUser applicationUser = userService.getAuthenticatedUser();
-            deviceService.addDevice(deviceAddRequest.getName(), applicationUser);
-            return ResponseEntity.ok("Устройство успешно добавлено");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Ошибка: " + e.getMessage());
-        } catch (SocketException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/view/{id}")
@@ -50,6 +36,17 @@ public class DeviceController {
         try {
             deviceService.deleteDevice(id);
             return ResponseEntity.ok("Устройство удалено");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Ошибка: " + e.getMessage());
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/rename")
+    public ResponseEntity<?> renameDevice(@RequestParam String mac, @RequestParam String newName) {
+        try {
+            Device updatedDevice = deviceService.renameDeviceByMac(mac, newName);
+            return ResponseEntity.ok("Устройство переименовано: " + updatedDevice);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("Ошибка: " + e.getMessage());
         }

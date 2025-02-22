@@ -6,6 +6,7 @@ import ru.mtuci.praktikaRBPO.model.ApplicationUser;
 import ru.mtuci.praktikaRBPO.model.License;
 import ru.mtuci.praktikaRBPO.ticket.Ticket;
 
+import java.net.SocketException;
 import java.util.List;
 
 public interface LicenseService {
@@ -14,9 +15,10 @@ public interface LicenseService {
     boolean existsByProductId(Long id);
     boolean existsByLicenseTypeId(Long id);
     long countActiveDevicesForLicense(License license);
-    Ticket activateLicense(LicenseActivationRequest request, ApplicationUser authenticatedApplicationUser);
+    Ticket activateLicense(LicenseActivationRequest request, ApplicationUser authenticatedApplicationUser) throws SocketException;
     Ticket renewLicense(UpdateLicenseRequest updateLicenseRequest, ApplicationUser authenticatedApplicationUser);
-    List<Ticket> getLicenseInfo(String mac);
+    Ticket getLicenseInfo(String mac, String licenseKey);
     License getByKey(String key);
     License createLicense(Long productId, Long ownerId, Long licenseTypeId, Integer maxDevice);
+    void deleteLicense(Long licenseId);
 }

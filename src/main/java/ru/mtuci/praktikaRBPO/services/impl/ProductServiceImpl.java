@@ -20,7 +20,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product getProductById(Long id) {
         return productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Продукт с ID " + id + " не найден"));
+                .orElseThrow(() -> new IllegalArgumentException("Продукт не найден"));
     }
 
     @Override
@@ -31,6 +31,16 @@ public class ProductServiceImpl implements ProductService {
         Product product = new Product();
         product.setName(name);
         product.setBlocked(blocked);
+        return productRepository.save(product);
+    }
+
+    public Product renameProduct(Long id, String newName) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Product не найден."));
+        if (productRepository.existsByName(newName)) {
+            throw new IllegalArgumentException("Продукт с таким именем уже существует");
+        }
+        product.setName(newName);
         return productRepository.save(product);
     }
 }

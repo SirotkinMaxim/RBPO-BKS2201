@@ -62,4 +62,17 @@ public class LicenseTypeController {
                     .body(null);
         }
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping("/rename/{id}")
+    public ResponseEntity<?> renameLicenseType(@PathVariable Long id, @RequestParam String newName) {
+        try {
+            LicenseType updatedLicenseType = licenseTypeService.renameLicenseType(id, newName);
+            return ResponseEntity.ok("Имя обновлено на: " + updatedLicenseType.getName());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Ошибка: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ошибка: " + e.getMessage());
+        }
+    }
 }

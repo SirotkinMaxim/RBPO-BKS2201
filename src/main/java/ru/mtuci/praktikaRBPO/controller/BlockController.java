@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import ru.mtuci.praktikaRBPO.dto.ChangeStatusRequest;
 import ru.mtuci.praktikaRBPO.services.LicenseService;
 
 @RequiredArgsConstructor
@@ -17,9 +16,7 @@ public class BlockController {
     private final LicenseService licenseService;
 
     @PatchMapping("/changeStatus/{licenseId}")
-    public ResponseEntity<String> changeLicenseStatus(
-            @PathVariable Long licenseId,
-            @RequestParam boolean isBlocked) {
+    public ResponseEntity<String> changeLicenseStatus(@PathVariable Long licenseId, @RequestParam boolean isBlocked) {
         try {
             licenseService.changeLicenseStatus(licenseId, isBlocked);
             return ResponseEntity.ok("Статус обновлен.");

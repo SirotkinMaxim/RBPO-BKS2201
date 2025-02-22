@@ -64,4 +64,17 @@ public class ProductController {
                     .body(null);
         }
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping("/rename/{id}")
+    public ResponseEntity<?> renameProduct(@PathVariable Long id, @RequestParam String newName) {
+        try {
+            Product updatedProduct = productService.renameProduct(id, newName);
+            return ResponseEntity.ok("Имя продукта обновлено на: " + updatedProduct.getName());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Ошибка: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ошибка: " + e.getMessage());
+        }
+    }
 }

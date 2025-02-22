@@ -7,5 +7,5 @@ import lombok.NoArgsConstructor;
 @Data
 public class LicenseActivationRequest {
     private String key;
-    private Long deviceId;
+    private String deviceName;
 }

@@ -1,5 +1,7 @@
 package ru.mtuci.praktikaRBPO.auth;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.web.bind.annotation.*;
 import ru.mtuci.praktikaRBPO.configuration.JwtTokenProvider;
 import ru.mtuci.praktikaRBPO.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -8,12 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 
@@ -30,10 +29,10 @@ public class AuthenticateController {
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         try {
             return ResponseEntity.ok(new LoginResponse(request.getEmail(), jwtProvider.createToken(request.getEmail(),
-                    authenticationManager
+                    new HashSet<>(authenticationManager
                             .authenticate(
                                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()))
-                            .getAuthorities().stream().collect(Collectors.toSet()))));
+                            .getAuthorities()))));
         } catch (AuthenticationException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Incorrect password");
@@ -48,5 +47,9 @@ public class AuthenticateController {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(ex.getMessage());
         }
+    }
+    @GetMapping("/test")
+    public ResponseEntity<?> test() {
+        return ResponseEntity.ok().build();
     }
 }

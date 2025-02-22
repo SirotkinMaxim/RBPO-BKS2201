@@ -17,7 +17,7 @@ public class InfoController {
     @GetMapping("/license")
     public ResponseEntity<?> getLicenseInfo(@RequestBody InfoRequest infoRequest) {
         try {
-            return ResponseEntity.ok(licenseService.getLicenseInfo(infoRequest.getMac()));
+            return ResponseEntity.ok(licenseService.getLicenseInfo(infoRequest.getMac(),infoRequest.getKey()));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {

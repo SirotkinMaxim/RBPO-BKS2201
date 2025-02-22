@@ -11,4 +11,5 @@ public interface UserService {
     Optional<ApplicationUser> findByEmail(String email);
     ApplicationUser getAuthenticatedUser();
     ApplicationUser getById(Long id);
+    void renameUserByEmail(String email, String newName, ApplicationUser authenticatedUser);
 }

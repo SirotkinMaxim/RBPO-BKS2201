@@ -1,5 +1,6 @@
 package ru.mtuci.praktikaRBPO.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,10 +20,12 @@ public class LicenseHistory {
     @GeneratedValue
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "license_id", referencedColumnName = "id")
     private License license;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private ApplicationUser applicationUser;
